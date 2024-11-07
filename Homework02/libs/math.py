@@ -14,6 +14,7 @@ def sigmoid(x):
     ##############################
     ###     YOUR CODE HERE     ###
     ##############################    
+    g = 1 / (1 + np.exp(-x))
     return g
 
 def softmax(y):
@@ -29,5 +30,9 @@ def softmax(y):
     ##############################
     ###     YOUR CODE HERE     ###
     ##############################
+    y_st = y - np.max(y, axis=1, keepdims=True)
+    exp = np.exp(y_st)
+    softmax_scores = exp / np.sum(exp, axis=1, keepdims=True)
+    
     return softmax_scores
 

@@ -18,6 +18,8 @@ class LogisticRegression:
         ##############################
         ###     YOUR CODE HERE     ###
         ##############################
+        z = np.dot(x, self.parameters)
+        preds = sigmoid(z)
         return preds
     
     @staticmethod
@@ -35,6 +37,8 @@ class LogisticRegression:
         ##############################
         ###     YOUR CODE HERE     ###
         ##############################
+        c = 1e-9
+        log_l = np.mean(y * np.log(preds + c) + (1-y) * np.log(1-preds + c))
         return log_l
     
     def update_theta(self, gradient: np.array, lr : float = 0.5):
@@ -51,7 +55,7 @@ class LogisticRegression:
         ##############################
         ###     YOUR CODE HERE     ###
         ##############################
-        pass
+        self.parameters += lr * gradient
         
     @staticmethod
     def compute_gradient(x : np.array, y: np.array, preds: np.array) -> np.array:
@@ -69,5 +73,7 @@ class LogisticRegression:
         ##############################
         ###     YOUR CODE HERE     ###
         ##############################
+        error = y - preds
+        gradient = np.dot(x.T, error) / len(y)
         return gradient
 
