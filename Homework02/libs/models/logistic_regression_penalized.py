@@ -20,5 +20,6 @@ class LogisticRegressionPenalized(LogisticRegression):
         ##############################
         ###     YOUR CODE HERE     ###
         ##############################
+        self.parameters = self.parameters + lr * (gradient - self.lambda_ * self.parameters)
         pass
     
