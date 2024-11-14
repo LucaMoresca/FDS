@@ -2,7 +2,6 @@ from libs.models.logistic_regression import LogisticRegression
 import numpy as np
 from libs.math import softmax
 
-
 class SoftmaxClassifier(LogisticRegression):
     def __init__(self, num_features :int, num_classes:int):
         self.parameters = np.random.normal(0,1e-3,(num_features, num_classes))
@@ -20,6 +19,8 @@ class SoftmaxClassifier(LogisticRegression):
         ##############################
         ###     YOUR CODE HERE     ###
         ##############################
+        # scores = X @ self.parameters
+        scores = np.dot(X, self.parameters)
         return scores
     
     def predict_labels(self, X: np.array) -> np.array:
@@ -35,6 +36,19 @@ class SoftmaxClassifier(LogisticRegression):
         ##############################
         ###     YOUR CODE HERE     ###
         ##############################
+        # scores = self.predict(X)
+ 
+        # if scores.ndim == 1:
+        #     scores = scores.reshape(-1, 1)
+        # preds = np.argmax(scores, axis=1)
+        
+        X = (X - np.mean(X, axis=0)) / np.std(X, axis=0)
+
+        
+        
+        scores = self.predict(X)
+        probs = softmax(scores)
+        preds = np.argmax(probs, axis=1)
         return preds
     
     @staticmethod
@@ -52,6 +66,10 @@ class SoftmaxClassifier(LogisticRegression):
         ##############################
         ###     YOUR CODE HERE     ###
         ##############################
+        softmax_preds = softmax(preds)
+        eps = 1e-16
+        softmax_preds = np.clip(softmax_preds, eps, 1-eps)
+        loss = -np.sum(y_onehot * np.log(softmax_preds)) / preds.shape[0]
         return loss
     
     def update_theta(self, gradient:np.array, lr:float=0.5):
@@ -68,7 +86,13 @@ class SoftmaxClassifier(LogisticRegression):
         ##############################
         ###     YOUR CODE HERE     ###
         ##############################
+        
+        
+
+
+        self.parameters = self.parameters - (lr*gradient)
         pass
+        
     
     @staticmethod
     def compute_gradient(x: np.array, y : np.array, preds: np.array) -> np.array:
@@ -86,6 +110,19 @@ class SoftmaxClassifier(LogisticRegression):
         ##############################
         ###     YOUR CODE HERE     ###
         ##############################
+        
+        if np.any(np.isnan(preds)) or np.any(np.isinf(preds)):
+            print("Warning: Infinite or NaN values detected in predicted values")
+            
+            
+        N = x.shape[0]
+        jacobian = np.dot(x.T, (preds-y)) / N
+        
+        
+        
+        if np.any(np.isnan(jacobian)) or np.any(np.isinf(jacobian)):
+            print("Warning: Infinite or NaN values detected in gradient")
+            
         return jacobian
     
     

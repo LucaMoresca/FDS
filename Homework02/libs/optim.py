@@ -24,10 +24,21 @@ def fit(model, x : np.array, y : np.array, x_val:np.array = None, y_val:np.array
         ###     START CODE HERE    ###
         ##############################
         pred = model.predict(x)
+        
+        
+        if np.any(np.isnan(pred)) or np.any(np.isinf(pred)):
+            print(f"NaN or Inf in predictions at step {it}")
+        
+        
         likelihood = model.likelihood(pred, y)
         likelihood_history[it] = likelihood
         
         gradient = model.compute_gradient(x, y, pred)
+        
+        if np.any(np.isnan(gradient)) or np.any(np.isinf(gradient)):
+            print(f"NaN or Inf in gradient at step {it}")
+            
+        
         model.update_theta(gradient, lr)
         ##############################
         ###      END CODE HERE     ###

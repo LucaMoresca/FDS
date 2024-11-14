@@ -30,9 +30,23 @@ def softmax(y):
     ##############################
     ###     YOUR CODE HERE     ###
     ##############################
-    y_st = y - np.max(y, axis=1, keepdims=True)
-    exp = np.exp(y_st)
-    softmax_scores = exp / np.sum(exp, axis=1, keepdims=True)
     
+    
+    
+    y_st = y - np.max(y, axis=1, keepdims=True)
+    
+    exps = np.exp(y_st)
+    
+
+    
+    
+    if np.any(np.isnan(exps)) or np.any(np.isinf(exps)):
+        print("Warning: Infinite or NaN values detected in softmax computation")
+    
+    
+    
+    
+    softmax_scores = exps / np.sum(exps, axis=1, keepdims=True)
+
     return softmax_scores
 
