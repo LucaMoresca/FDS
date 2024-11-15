@@ -42,10 +42,8 @@ class SoftmaxClassifier(LogisticRegression):
         #     scores = scores.reshape(-1, 1)
         # preds = np.argmax(scores, axis=1)
         
-        X = (X - np.mean(X, axis=0)) / np.std(X, axis=0)
+        X = (X - np.mean(X, axis=0)) / (np.std(X, axis=0)+1e-8)
 
-        
-        
         scores = self.predict(X)
         probs = softmax(scores)
         preds = np.argmax(probs, axis=1)
@@ -66,6 +64,7 @@ class SoftmaxClassifier(LogisticRegression):
         ##############################
         ###     YOUR CODE HERE     ###
         ##############################
+
         softmax_preds = softmax(preds)
         eps = 1e-16
         softmax_preds = np.clip(softmax_preds, eps, 1-eps)
@@ -87,8 +86,10 @@ class SoftmaxClassifier(LogisticRegression):
         ###     YOUR CODE HERE     ###
         ##############################
         
-        
-
+        gradient_norm = np.linalg.norm(gradient)
+        clip_value = 1.0
+        if gradient_norm > clip_value:
+            gradient = gradient * clip_value / gradient_norm
 
         self.parameters = self.parameters - (lr*gradient)
         pass
@@ -111,17 +112,9 @@ class SoftmaxClassifier(LogisticRegression):
         ###     YOUR CODE HERE     ###
         ##############################
         
-        if np.any(np.isnan(preds)) or np.any(np.isinf(preds)):
-            print("Warning: Infinite or NaN values detected in predicted values")
-            
-            
         N = x.shape[0]
         jacobian = np.dot(x.T, (preds-y)) / N
         
-        
-        
-        if np.any(np.isnan(jacobian)) or np.any(np.isinf(jacobian)):
-            print("Warning: Infinite or NaN values detected in gradient")
             
         return jacobian
     
